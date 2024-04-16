@@ -1,7 +1,7 @@
 {
-  "name": "sample-extension",
-  "displayName": "sample extension",
-  "description": "An example of an extension made for VSCode.",
+  "name": "audio-debugger",
+  "displayName": "Audio Debugger",
+  "description": "An accessible audio debugger.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.86.0"
@@ -9,20 +9,38 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": ["onCommand:sample-extension.readAloud"],
+  "activationEvents": ["onCommand:audio-debugger.readAloud"],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "sample-extension.readAloud",
-        "title": "Read Aloud Selected Text"
+        "command": "audio-debugger.readAloud",
+        "title": "Read Text Aloud"
+      },
+      {
+        "command": "audio-debugger.aiDebugging",
+        "title": "OpenAI Audio Feedback"
+      },
+      {
+        "command": "audio-debugger.aiExplanation",
+        "title": "OpenAI Text Feedback"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "when": "editorTextFocus && !editorReadonly",
-          "command": "sample-extension.readAloud",
+          "command": "audio-debugger.readAloud",
+          "group": "navigation"
+        },
+        {
+          "when": "editorTextFocus && !editorReadonly",
+          "command": "audio-debugger.aiDebugging",
+          "group": "navigation"
+        },
+        {
+          "when": "editorTextFocus && !editorReadonly",
+          "command": "audio-debugger.aiExplanation",
           "group": "navigation"
         }
       ]

@@ -1,59 +1,65 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-// Include the 'say' package for text-to-speech functionality
-// Make sure to install it using npm install say
 const say = require('say');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-
 /**
- * @param {vscode.ExtensionContext} context
+ * Activates the extension.
+ * 
+ * This function is called when the extension is activated.
+ * It registers commands and adds them to the context's subscriptions.
+ * 
+ * @param {vscode.ExtensionContext} context - The context in which the extension is executed. 
+ * This context is provided by Visual Studio Code and contains APIs that the extension can use to interact with the editor.
  */
 function activate(context) {
+    console.log('Audio Debugger is now active!');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "sample-extension" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('sample-extension.readAloud', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		const editor = vscode.window.activeTextEditor;
+    // Register the "Read Text Aloud" command and add it to the subscriptions
+    let readAloudDisposable = vscode.commands.registerCommand('audio-debugger.readAloud', function () {
+        const editor = vscode.window.activeTextEditor;
         if (!editor) {
-			vscode.window.showInformationMessage('No editor is active');
+            vscode.window.showInformationMessage('No editor is active');
             return;
         }
-
-        const selection = editor.selection;
-        const text = editor.document.getText(selection);
-
-        // Use the text-to-speech functionality to read the selected text aloud
+        const text = editor.document.getText(editor.selection);
         readTextAloud(text);
     });
 
-    context.subscriptions.push(disposable);
+    // Register the "AI Debugging" command and add it to the subscriptions
+    let aiDebuggingDisposable = vscode.commands.registerCommand('audio-debugger.aiDebugging', function () {
+        vscode.window.showInformationMessage('AI Debugging feature is not yet implemented.');
+    });
+
+    // Register the "AI Explanation" command and add it to the subscriptions
+    let aiExplanationDisposable = vscode.commands.registerCommand('audio-debugger.aiExplanation', function () {
+        vscode.window.showInformationMessage('AI Explanation feature is not yet implemented.');
+    });
+
+    context.subscriptions.push(readAloudDisposable, aiDebuggingDisposable, aiExplanationDisposable);
 }
 
-// This method is called when your extension is deactivated
+/**
+ * Deactivates the extension.
+ * 
+ * This function is called when the extension is deactivated. Currently, it does not perform any actions.
+ */
 function deactivate() {}
 
+/**
+ * Speaks the provided text using the system's text-to-speech capabilities.
+ * 
+ * @param {string} text - The text to be spoken.
+ */
 function readTextAloud(text) {
-    // Use the 'say' library to speak the text
     say.speak(text, null, 1.0, (err) => {
         if (err) {
-            return console.error(err);
+            console.error(err);
+            return;
         }
         console.log('Text has been spoken.');
     });
 }
 
 module.exports = {
-	activate,
-	deactivate
+    activate,
+    deactivate
 }
