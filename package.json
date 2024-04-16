@@ -4,12 +4,14 @@
   "description": "An accessible audio debugger.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.86.0"
+    "vscode": "^1.88.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": ["onCommand:audio-debugger.readAloud"],
+  "activationEvents": [
+    "onCommand:audio-debugger.readAloud"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -19,11 +21,11 @@
       },
       {
         "command": "audio-debugger.aiDebugging",
-        "title": "OpenAI Audio Feedback"
+        "title": "OpenAI Debugging"
       },
       {
         "command": "audio-debugger.aiExplanation",
-        "title": "OpenAI Text Feedback"
+        "title": "OpenAI Explanation"
       }
     ],
     "menus": {
@@ -45,7 +47,7 @@
         }
       ]
     }
-},
+  },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
@@ -54,13 +56,14 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
-    "@types/vscode": "^1.86.0",
+    "@types/vscode": "^1.88.0",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.9",
     "eslint": "^8.56.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "say": "^0.16.0"
   }
 }
