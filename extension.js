@@ -24,10 +24,25 @@ function activate(context) {
         readTextAloud(text);
     });
 
-    let aiDebuggingDisposable = vscode.commands.registerCommand('audio-debugger.aiDebugging', function () {
-        vscode.window.showInformationMessage('AI Debugging feature is not yet implemented.');
+    let aiDebuggingDisposable = vscode.commands.registerCommand('audio-debugger.aiDebugging', async function () {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage('No editor is active');
+            return;
+        }
+        const userQuery = await vscode.window.showInputBox({
+            prompt: "What issue would you like help debugging?",
+            placeHolder: "Describe the issue with your code"
+        });
+        if (!userQuery) {
+            vscode.window.showInformationMessage('No debugging query provided.');
+            return;
+        }
+        const code = editor.document.getText(editor.selection);
+        const debuggingResponse = await getOpenAIDebugging(code, userQuery, context.secrets);
+        await presentResponseOptions(debuggingResponse);
     });
-
+    
     let aiExplanationDisposable = vscode.commands.registerCommand('audio-debugger.aiExplanation', async function () {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
@@ -40,7 +55,7 @@ function activate(context) {
             return;
         }
         const explanation = await getOpenAIExplanation(code, context.secrets);
-        vscode.window.showInformationMessage(explanation);
+        await presentResponseOptions(explanation);
     });
 
     context.subscriptions.push(readAloudDisposable, aiDebuggingDisposable, aiExplanationDisposable);
@@ -52,6 +67,59 @@ function activate(context) {
  * This function is called when the extension is deactivated. Currently, it does not perform any actions.
  */
 function deactivate() {}
+
+async function presentResponseOptions(response) {
+    const pick = await vscode.window.showQuickPick(['Show Text', 'Read Aloud', 'Both'], {
+        placeHolder: 'Choose how you would like the response presented'
+    });
+
+    if (pick === 'Show Text') {
+        vscode.window.showInformationMessage(response);
+    } else if (pick === 'Read Aloud') {
+        say.speak(response);
+    } else if (pick === 'Both') {
+        vscode.window.showInformationMessage(response);
+        say.speak(response);
+    }
+}
+
+async function getOpenAIDebugging(code, query, secrets) {
+    const apiKey = await secrets.get('openAIKey');
+    if (!apiKey) {
+        console.error('OpenAI API key is not set.');
+        await storeApiKey(secrets);
+        return 'Please enter your OpenAI API key.';
+    }
+
+    const data = {
+        model: "gpt-3.5-turbo",
+        messages: [
+            {
+                role: "system",
+                content: "You are a helpful assistant capable of providing debugging assistance and code fixes."
+            },
+            {
+                role: "user",
+                content: query + "\nHere is the code:\n" + code
+            }
+        ]
+    };
+
+    try {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', data, {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        // Extract the response which should ideally include both the solution and an explanation
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        console.error("Error calling OpenAI for debugging:", error);
+        return 'Failed to get debugging help from OpenAI.';
+    }
+}
+
 
 /**
  * Retrieves and returns the OpenAI API explanation for the provided code.
