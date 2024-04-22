@@ -68,6 +68,19 @@ function activate(context) {
  */
 function deactivate() {}
 
+/**
+ * Helper function to handle the "Finish Reading" message.
+ */
+function handleStopPromise() {
+    const stopPromise = vscode.window.showInformationMessage('Reading text aloud...', 'Finish Reading');
+
+    stopPromise.then((selection) => {
+        if (selection === 'Finish Reading') {
+            say.stop();
+        } 
+    });
+}
+
 async function presentResponseOptions(response) {
     const pick = await vscode.window.showQuickPick(['Show Text', 'Read Aloud', 'Both'], {
         placeHolder: 'Choose how you would like the response presented'
@@ -76,8 +89,10 @@ async function presentResponseOptions(response) {
     if (pick === 'Show Text') {
         vscode.window.showInformationMessage(response);
     } else if (pick === 'Read Aloud') {
+        handleStopPromise();
         say.speak(response);
     } else if (pick === 'Both') {
+        handleStopPromise();
         vscode.window.showInformationMessage(response);
         say.speak(response);
     }
@@ -205,6 +220,8 @@ function readTextAloud(text) {
         }
         console.log('Text has been spoken.');
     });
+
+    handleStopPromise();
 }
 
 module.exports = {
