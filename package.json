@@ -31,22 +31,43 @@
     "menus": {
       "editor/context": [
         {
-          "when": "editorTextFocus && !editorReadonly",
+          "when": "editorHasSelection && editorTextFocus && !editorReadonly",
           "command": "audio-debugger.readAloud",
           "group": "aiDebuggingMenu"
         },
         {
-          "when": "editorTextFocus && !editorReadonly",
+          "when": "editorHasSelection && editorTextFocus && !editorReadonly",
           "command": "audio-debugger.aiDebugging",
           "group": "aiDebuggingMenu@1"
         },
         {
-          "when": "editorTextFocus && !editorReadonly",
+          "when": "editorHasSelection && editorTextFocus && !editorReadonly",
           "command": "audio-debugger.aiExplanation",
           "group": "aiDebuggingMenu@2"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "audio-debugger.readAloud",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r",
+        "when": "editorHasSelection && editorTextFocus && !editorReadonly"
+
+      },
+      {
+        "command": "audio-debugger.aiDebugging",
+        "key": "ctrl+alt+d",
+        "mac": "cmd+alt+d",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "audio-debugger.aiExplanation",
+        "key": "ctrl+alt+e",
+        "mac": "cmd+alt+e",
+        "when": "editorHasSelection"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
