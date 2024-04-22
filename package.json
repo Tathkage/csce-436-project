@@ -33,17 +33,17 @@
         {
           "when": "editorTextFocus && !editorReadonly",
           "command": "audio-debugger.readAloud",
-          "group": "navigation"
+          "group": "aiDebuggingMenu"
         },
         {
           "when": "editorTextFocus && !editorReadonly",
           "command": "audio-debugger.aiDebugging",
-          "group": "navigation"
+          "group": "aiDebuggingMenu@1"
         },
         {
           "when": "editorTextFocus && !editorReadonly",
           "command": "audio-debugger.aiExplanation",
-          "group": "navigation"
+          "group": "aiDebuggingMenu@2"
         }
       ]
     }
