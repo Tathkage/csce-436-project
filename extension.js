@@ -20,6 +20,10 @@ function activate(context) {
             vscode.window.showInformationMessage('No editor is active');
             return;
         }
+        else if (editor.selection.isEmpty) {
+            vscode.window.showInformationMessage('You have no text selected!');
+            return;
+        }
         const text = editor.document.getText(editor.selection);
         readTextAloud(text);
     });
