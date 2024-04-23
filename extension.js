@@ -85,6 +85,17 @@ function handleStopPromise() {
     });
 }
 
+function handleReplayPromise(text) {
+    const replayPromise = vscode.window.showInformationMessage('Do you want to replay the text?', 'Yes', 'No');
+
+    replayPromise.then((selection) => {
+        if (selection === 'Yes') {
+            readTextAloud(text);
+            handleStopPromise();
+        } 
+    });
+}
+
 async function presentResponseOptions(response) {
     const pick = await vscode.window.showQuickPick(['Show Text', 'Read Aloud', 'Both'], {
         placeHolder: 'Choose how you would like the response presented'
@@ -93,12 +104,10 @@ async function presentResponseOptions(response) {
     if (pick === 'Show Text') {
         vscode.window.showInformationMessage(response);
     } else if (pick === 'Read Aloud') {
-        handleStopPromise();
-        say.speak(response);
+        readTextAloud(response);
     } else if (pick === 'Both') {
-        handleStopPromise();
+        readTextAloud(response);
         vscode.window.showInformationMessage(response);
-        say.speak(response);
     }
 }
 
@@ -223,6 +232,7 @@ function readTextAloud(text) {
             return;
         }
         console.log('Text has been spoken.');
+        handleReplayPromise(text);
     });
 
     handleStopPromise();
